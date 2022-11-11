@@ -1,63 +1,131 @@
+const AdminJS = require('adminjs')
+const AdminJSExpress = require('@adminjs/express')
 const express = require("express");
+const Connect = require('connect-pg-simple')
+const session = require('express-session')
 const cors = require("cors");
+const AdminJSSequelize = require('@adminjs/sequelize')
 
-const app = express();
-
-var corsOptions = {
-  origin: "http://localhost:8081"
-};
-
-app.use(cors(corsOptions));
-
-// parse requests of content-type - application/json
-app.use(express.json());
-
-// parse requests of content-type - application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }));
-
-const db = require("./app/models");
-const Role = db.role;
-
-db.sequelize.sync()
-  .then(() => {
-    console.log("Synced db.");
-  })
-  .catch((err) => {
-    console.log("Failed to sync db: " + err.message);
-  });
-
-// // drop the table if it already exists
-// db.sequelize.sync({ force: true }).then(() => {
-//   console.log("Drop and re-sync db.");
-// });
-
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to bezkoder application." });
-});
-
-require("./app/routes/product.routes")(app);
-require('./app/routes/auth.routes')(app);
-require('./app/routes/user.routes')(app);
-
-// set port, listen for requests
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
-});
-function initial() {
-  Role.create({
-    id: 1,
-    name: "user"
-  });
- 
-  Role.create({
-    id: 2,
-    name: "moderator"
-  });
- 
-  Role.create({
-    id: 3,
-    name: "admin"
-  });
+const DEFAULT_ADMIN = {
+  email: 'admin@example.com',
+  password: 'password',
 }
+const db = require("./app/models");
+// const Product = require("./app/models/product.model")
+
+AdminJS.registerAdapter({
+  Resource: AdminJSSequelize.Resource,
+  Database: AdminJSSequelize.Database,
+})
+
+const authenticate = async (email, password) => {
+  if (email === DEFAULT_ADMIN.email && password === DEFAULT_ADMIN.password) {
+    return Promise.resolve(DEFAULT_ADMIN)
+  }
+  return null
+}
+
+const start = async () => {
+  // const adminOptions = {
+  //   // We pass Category to `resources`
+  //   resources: [Product],
+  // }
+  const app = express();
+  const admin = new AdminJS({
+    databases: [db],
+    rootPath: '/admin',
+  })
+
+  const ConnectSession = Connect(session)
+  // const sessionStore = new ConnectSession({
+  //   conObject: {
+  //     connectionString: 'mysql://root:root@localhost:3306/ecommerce',
+  //     ssl: process.env.NODE_ENV === 'production',
+  //   },
+  //   tableName: 'session',
+  //   createTableIfMissing: true,
+  // })
+
+  const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
+    admin,
+    {
+      authenticate,
+      cookieName: 'adminjs',
+      cookiePassword: 'sessionsecret',
+    },
+    null,
+    {
+      // store: sessionStore,
+      resave: true,
+      saveUninitialized: true,
+      secret: 'sessionsecret',
+      cookie: {
+        httpOnly: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === 'production',
+      },
+      name: 'adminjs',
+    }
+  )
+  
+  app.use(admin.options.rootPath, adminRouter)
+  
+  var corsOptions = {
+    origin: "http://localhost:8081"
+  };
+  app.use(cors(corsOptions));
+
+  // parse requests of content-type - application/json
+  app.use(express.json());
+
+  // parse requests of content-type - application/x-www-form-urlencoded
+  app.use(express.urlencoded({ extended: true }));
+
+  const Role = db.role;
+
+  db.sequelize.sync()
+    .then(() => {
+      console.log("Synced db.");
+      // initial()
+    })
+    .catch((err) => {
+      console.log("Failed to sync db: " + err.message);
+    });
+
+  // // drop the table if it already exists
+  // db.sequelize.sync({ force: true }).then(() => {
+  //   console.log("Drop and re-sync db.");
+  // });
+
+  // simple route
+  app.get("/", (req, res) => {
+    res.json({ message: "Welcome to bezkoder application." });
+  });
+
+  require("./app/routes/product.routes")(app);
+  require('./app/routes/auth.routes')(app);
+  require('./app/routes/user.routes')(app);
+
+  // set port, listen for requests
+  app.listen(PORT, () => {
+    console.log(`AdminJS started on http://localhost:${PORT}${admin.options.rootPath}`);
+  });
+  function initial() {
+    Role.create({
+      id: 1,
+      name: "user"
+    });
+   
+    Role.create({
+      id: 2,
+      name: "moderator"
+    });
+   
+    Role.create({
+      id: 3,
+      name: "admin"
+    });
+  }
+}
+
+start()

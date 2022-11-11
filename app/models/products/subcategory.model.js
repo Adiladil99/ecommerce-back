@@ -1,15 +1,12 @@
 module.exports = (sequelize, Sequelize) => {
-  const Product = sequelize.define("product", {
-    title: {
+  const Subcategory = sequelize.define("subcategory", {
+    name: {
       type: Sequelize.STRING
     },
     description: {
       type: Sequelize.STRING
     },
-    published: {
-      type: Sequelize.BOOLEAN
-    }
   });
 
-  return Product;
+  return Subcategory;
 };

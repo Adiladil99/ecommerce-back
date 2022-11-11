@@ -4,7 +4,7 @@ const Sequelize = require("sequelize");
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
   dialect: dbConfig.dialect,
-  operatorsAliases: false,
+  operatorsAliases: '0',
 
   pool: {
     max: dbConfig.pool.max,
@@ -19,9 +19,14 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.products = require("./product.model.js")(sequelize, Sequelize);
-db.user = require("../models/user.model.js")(sequelize, Sequelize);
-db.role = require("../models/role.model.js")(sequelize, Sequelize);
+db.products = require("./products/product.model.js")(sequelize, Sequelize);
+db.products = require("./products/brand.model.js")(sequelize, Sequelize);
+db.products = require("./products/category.model.js")(sequelize, Sequelize);
+db.products = require("./products/discount.model.js")(sequelize, Sequelize);
+db.products = require("./products/inventory.model.js")(sequelize, Sequelize);
+
+db.user = require("./user.model.js")(sequelize, Sequelize);
+db.role = require("./role.model.js")(sequelize, Sequelize);
 
 db.role.belongsToMany(db.user, {
   through: "user_roles",
