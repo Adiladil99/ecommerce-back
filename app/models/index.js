@@ -20,13 +20,35 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.products = require("./products/product.model.js")(sequelize, Sequelize);
-db.products = require("./products/brand.model.js")(sequelize, Sequelize);
-db.products = require("./products/category.model.js")(sequelize, Sequelize);
-db.products = require("./products/discount.model.js")(sequelize, Sequelize);
-db.products = require("./products/inventory.model.js")(sequelize, Sequelize);
+db.brand = require("./products/brand.model.js")(sequelize, Sequelize);
+db.category = require("./products/category.model.js")(sequelize, Sequelize);
+db.discount = require("./products/discount.model.js")(sequelize, Sequelize);
+db.inventory = require("./products/inventory.model.js")(sequelize, Sequelize);
+// db.discount_products = require("./products/discount_products.model.js")(sequelize, Sequelize);
+const DiscountProducts = sequelize.define("discount_products", {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
+  discountId: {
+      type: Sequelize.INTEGER,
+      references: {
+          model: db.discount,
+          key: 'id',
+      },
+  }, productsId: {
+      type: Sequelize.INTEGER,
+      references: {
+          model: db.products,
+          key: 'id',
+      },
+  },
+});
 
-db.user = require("./user.model.js")(sequelize, Sequelize);
-db.role = require("./role.model.js")(sequelize, Sequelize);
+db.user = require("./users/user.model.js")(sequelize, Sequelize);
+db.role = require("./users/role.model.js")(sequelize, Sequelize);
 
 db.role.belongsToMany(db.user, {
   through: "user_roles",
@@ -37,6 +59,16 @@ db.user.belongsToMany(db.role, {
   through: "user_roles",
   foreignKey: "userId",
   otherKey: "roleId"
+});
+
+db.category.hasMany(db.products); 
+db.brand.hasMany(db.products);
+db.products.hasOne(db.inventory, { onDelete: "cascade"});
+db.discount.belongsToMany(db.products, {
+  through: DiscountProducts,
+});
+db.products.belongsToMany(db.discount, {
+  through: DiscountProducts,
 });
 
 db.ROLES = ["user", "admin", "moderator"];

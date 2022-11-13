@@ -6,7 +6,7 @@ const session = require('express-session')
 const cors = require("cors");
 const AdminJSSequelize = require('@adminjs/sequelize')
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 const DEFAULT_ADMIN = {
   email: 'admin@example.com',
   password: 'password',
@@ -83,13 +83,13 @@ const start = async () => {
 
   const Role = db.role;
 
-  db.sequelize.sync()
+  db.sequelize.sync({alter:true})
     .then(() => {
       console.log("Synced db.");
-      // initial()
+      initial()
     })
     .catch((err) => {
-      console.log("Failed to sync db: " + err.message);
+      console.log("Failed to sync db: " + err.message); 
     });
 
   // // drop the table if it already exists
