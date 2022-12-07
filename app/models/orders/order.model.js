@@ -1,24 +1,21 @@
 module.exports = (sequelize, Sequelize) => {
-  const Category = sequelize.define("pr_category", {
+  const Order = sequelize.define("or_order", {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true
     },
-    name: {
-      type: Sequelize.STRING
-    },
-    image: {
-      type: Sequelize.STRING
+    total: {
+      type: Sequelize.FLOAT
     },
   }, {
     indexes: [
       {
         unique: true,
-        fields: ['id', 'name']
+        fields: ['id']
       },
     ]
   });
 
-  return Category;
+  return Order;
 };

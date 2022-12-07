@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const Brand = sequelize.define("pr_brand", {
+  const Payment_type = sequelize.define("or_payment_type", {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
@@ -8,20 +8,14 @@ module.exports = (sequelize, Sequelize) => {
     name: {
       type: Sequelize.STRING
     },
-    image: {
-      type: Sequelize.STRING
-    },
-    description: {
-      type: Sequelize.STRING
-    },
   }, {
     indexes: [
       {
         unique: true,
-        fields: ['id', 'name']
+        fields: ['id']
       },
     ]
   });
 
-  return Brand;
+  return Payment_type;
 };

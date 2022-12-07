@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const Discount = sequelize.define("pr_discount", {
+  const Users_role = sequelize.define("sh_users_role", {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
@@ -8,26 +8,26 @@ module.exports = (sequelize, Sequelize) => {
     name: {
       type: Sequelize.STRING
     },
-    description: {
-      type: Sequelize.STRING
+    is_created: {
+      type: Sequelize.BOOLEAN
     },
-    start_time: {
-      type: Sequelize.DATE
+    is_edited: {
+      type: Sequelize.BOOLEAN
     },
-    end_time: {
-      type: Sequelize.DATE
+    is_deleted: {
+      type: Sequelize.BOOLEAN
     },
-    percent: {
-      type: Sequelize.INTEGER
+    is_read: {
+      type: Sequelize.BOOLEAN
     }
   }, {
     indexes: [
       {
         unique: true,
-        fields: ['id', 'name']
+        fields: ['id']
       },
     ]
   });
 
-  return Discount;
+  return Users_role;
 };

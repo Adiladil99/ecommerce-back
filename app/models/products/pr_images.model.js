@@ -1,27 +1,21 @@
 module.exports = (sequelize, Sequelize) => {
-  const Brand = sequelize.define("pr_brand", {
+  const Pr_images = sequelize.define("pr_images", {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true
     },
-    name: {
-      type: Sequelize.STRING
-    },
-    image: {
-      type: Sequelize.STRING
-    },
-    description: {
+    path: {
       type: Sequelize.STRING
     },
   }, {
     indexes: [
       {
         unique: true,
-        fields: ['id', 'name']
+        fields: ['id']
       },
     ]
   });
 
-  return Brand;
+  return Pr_images;
 };

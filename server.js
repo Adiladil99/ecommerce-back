@@ -86,7 +86,7 @@ const start = async () => {
   db.sequelize.sync({alter:true})
     .then(() => {
       console.log("Synced db.");
-      initial()
+      // initial()
     })
     .catch((err) => {
       console.log("Failed to sync db: " + err.message); 

@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const Brand = sequelize.define("pr_brand", {
+  const Shop_reviews = sequelize.define("sh_reviews", {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
@@ -8,20 +8,29 @@ module.exports = (sequelize, Sequelize) => {
     name: {
       type: Sequelize.STRING
     },
-    image: {
+    comment: {
+      type: Sequelize.STRING,
+    },
+    positive: {
       type: Sequelize.STRING
     },
-    description: {
+    negative: {
       type: Sequelize.STRING
     },
+    rating: {
+      type: Sequelize.FLOAT
+    },
+    date: {
+      type: Sequelize.DATE
+    }
   }, {
     indexes: [
       {
         unique: true,
-        fields: ['id', 'name']
+        fields: ['id']
       },
     ]
   });
 
-  return Brand;
+  return Shop_reviews;
 };

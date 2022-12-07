@@ -1,17 +1,11 @@
 module.exports = (sequelize, Sequelize) => {
-  const Brand = sequelize.define("pr_brand", {
+  const Characteristic = sequelize.define("pr_characteristic", {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true
     },
     name: {
-      type: Sequelize.STRING
-    },
-    image: {
-      type: Sequelize.STRING
-    },
-    description: {
       type: Sequelize.STRING
     },
   }, {
@@ -23,5 +17,5 @@ module.exports = (sequelize, Sequelize) => {
     ]
   });
 
-  return Brand;
+  return Characteristic;
 };

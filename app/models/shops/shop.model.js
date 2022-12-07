@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const Brand = sequelize.define("pr_brand", {
+  const Shop = sequelize.define("sh_shop", {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
@@ -8,12 +8,18 @@ module.exports = (sequelize, Sequelize) => {
     name: {
       type: Sequelize.STRING
     },
+    iin: {
+      type: Sequelize.STRING
+    },
+    phone: {
+      type: Sequelize.STRING
+    },
+    email: {
+      type: Sequelize.STRING
+    },
     image: {
       type: Sequelize.STRING
-    },
-    description: {
-      type: Sequelize.STRING
-    },
+    }
   }, {
     indexes: [
       {
@@ -23,5 +29,5 @@ module.exports = (sequelize, Sequelize) => {
     ]
   });
 
-  return Brand;
+  return Shop;
 };
