@@ -1,34 +1,46 @@
 const db = require("../models");
-const Product = db.products;
+const fs = require("fs");
+const Product = db.pr_product;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Product
 exports.create = (req, res) => {
+  console.log(req.body.main_image);
   // Validate request
-  if (!req.body.title) {
+  if (!req.body.name) {
     res.status(400).send({
-      message: JSON.stringify(res)
+      message: req.body
     });
     return;
   }
 
   // Create a Product
   const product = {
-    title: req.body.title,
+    name: req.body.name,
+    articul: req.body.articul,
     description: req.body.description,
-    published: req.body.published ? req.body.published : false
+    main_image: "/upload/" + req.file.filename,
+    link_to_video: req.body.link_to_video,
+    prBrandId: req.body.brand_id,
+    prCategoryId: req.body.category_id,
   };
 
   // Save Product in the database
   Product.create(product)
     .then(data => {
+      console.log( __dirname);
       res.send(data);
-    })
+      fs.writeFileSync(
+        global.__dirname + "../../../upload/" + data.name,
+        image.main_image
+      );
+    }) 
     .catch(err => {
+      console.log( __dirname); 
       res.status(500).send({
         message:
           err.message || "Some error occurred while creating the Product."
-      });
+      }); 
     });
 };
 

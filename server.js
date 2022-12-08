@@ -1,5 +1,7 @@
 const AdminJS = require('adminjs')
 const AdminJSExpress = require('@adminjs/express')
+const bodyParser = require('body-parser');
+
 const express = require("express");
 const Connect = require('connect-pg-simple')
 const session = require('express-session')
@@ -65,7 +67,7 @@ const start = async () => {
         secure: process.env.NODE_ENV === 'production',
       },
       name: 'adminjs',
-    }
+    } 
   )
   
   app.use(admin.options.rootPath, adminRouter)
@@ -76,10 +78,10 @@ const start = async () => {
   app.use(cors(corsOptions));
 
   // parse requests of content-type - application/json
-  app.use(express.json());
+  app.use(bodyParser.json());
 
   // parse requests of content-type - application/x-www-form-urlencoded
-  app.use(express.urlencoded({ extended: true }));
+  app.use(bodyParser.urlencoded({ extended: true }));
 
   const Role = db.role;
 
@@ -102,14 +104,13 @@ const start = async () => {
     res.json({ message: "Welcome to bezkoder application." });
   });
 
-  require("./app/routes/product.routes")(app);
-  require('./app/routes/auth.routes')(app);
-  require('./app/routes/user.routes')(app);
-
   // set port, listen for requests
   app.listen(PORT, () => {
     console.log(`AdminJS started on http://localhost:${PORT}${admin.options.rootPath}`);
   });
+  require("./app/routes/product.routes")(app);
+  require('./app/routes/auth.routes')(app);
+  require('./app/routes/user.routes')(app);
   function initial() {
     Role.create({
       id: 1,

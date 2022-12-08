@@ -5,15 +5,17 @@ module.exports = (sequelize, Sequelize, product, discount) => {
       autoIncrement: true,
       primaryKey: true
     },
-    product_id: {      
+    product: {      
       type: Sequelize.INTEGER,
+      allowNull: false,
       references: {
         model: product,
         key: 'id',
       }
     },
-    discount_id: {      
+    discount: {      
       type: Sequelize.INTEGER,
+      allowNull: false,
       references: {
         model: discount,
         key: 'id',

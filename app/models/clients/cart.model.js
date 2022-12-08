@@ -7,6 +7,7 @@ module.exports = (sequelize, Sequelize, product, client) => {
     },
     product_id: {      
       type: Sequelize.INTEGER,
+      allowNull: false,
       references: {
         model: product,
         key: 'id',
@@ -14,6 +15,7 @@ module.exports = (sequelize, Sequelize, product, client) => {
     },
     client_id: {      
       type: Sequelize.INTEGER,
+      allowNull: false,
       references: {
         model: client,
         key: 'id',

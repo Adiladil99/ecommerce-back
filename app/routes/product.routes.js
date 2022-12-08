@@ -1,10 +1,11 @@
+const upload = require("../middleware/upload");
 module.exports = app => {
   const products = require("../controllers/product.controller.js");
 
   var router = require("express").Router();
 
   // Create a new Product
-  router.post("/", products.create);
+  router.post("/", upload.single("main_image"), products.create);
 
   // Retrieve all Products
   router.get("/", products.findAll);

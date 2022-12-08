@@ -44,12 +44,6 @@ db.pr_category.belongsTo(db.pr_category, {as: 'parent', foreignKey: 'parentId'})
 db.pr_product.hasMany(db.pr_reviews);
 db.pr_brand.hasMany(db.pr_product);
 db.pr_category.hasMany(db.pr_product);
-db.pr_product.belongsToMany(db.pr_discount, {through: db.product_discounts});
-db.pr_discount.belongsToMany(db.pr_product, {through: db.product_discounts});
-db.pr_brand.belongsToMany(db.pr_discount, {through: db.brand_discounts});
-db.pr_discount.belongsToMany(db.pr_brand, {through: db.brand_discounts});
-db.pr_category.belongsToMany(db.pr_discount, {through: db.category_discounts});
-db.pr_discount.belongsToMany(db.pr_category, {through: db.category_discounts});
 
 //shop models
 db.sh_addresses = require("./shops/addresses.model.js")(sequelize, Sequelize);
@@ -85,10 +79,6 @@ db.cl_client.hasMany(db.pr_reviews);
 db.cl_client.hasMany(db.sh_reviews);
 db.cl_client.hasMany(db.cl_addresses);
 db.cities.hasMany(db.cl_addresses);
-db.pr_product.belongsToMany(db.cl_client, {through: db.cl_favorites});
-db.cl_client.belongsToMany(db.pr_product, {through: db.cl_favorites});
-db.pr_product.belongsToMany(db.cl_client, {through: db.cl_cart});
-db.cl_client.belongsToMany(db.pr_product, {through: db.cl_cart});
 
 //order models
 db.or_order_list = require("./orders/order_list.model.js")(sequelize, Sequelize);
@@ -108,10 +98,6 @@ db.pr_product.hasMany(db.or_order_list);
 db.ad_user = require("./admin/user.model.js")(sequelize, Sequelize);
 db.ad_role = require("./admin/role.model.js")(sequelize, Sequelize);
 db.ad_user_roles = require("./admin/user_roles.model.js")(sequelize, Sequelize, db.ad_user, db.ad_role);
-
-//admin associations
-db.ad_user.belongsToMany(db.ad_role, {through: db.ad_user_roles});
-db.ad_role.belongsToMany(db.ad_user, {through: db.ad_user_roles});
 
 db.ROLES = ["user", "admin", "moderator"];
 
