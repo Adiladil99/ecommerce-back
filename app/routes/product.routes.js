@@ -9,7 +9,8 @@ module.exports = app => {
 
   // Retrieve all Products
   router.get("/", products.findAll);
-
+  router.get("/category", products.findByCategories);
+  
   // Retrieve all published Products
   router.get("/published", products.findAllPublished);
 

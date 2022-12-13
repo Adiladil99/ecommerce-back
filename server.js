@@ -1,7 +1,7 @@
 const AdminJS = require('adminjs')
 const AdminJSExpress = require('@adminjs/express')
 const bodyParser = require('body-parser');
-
+const path = require('path');
 const express = require("express");
 const Connect = require('connect-pg-simple')
 const session = require('express-session')
@@ -83,6 +83,8 @@ const start = async () => {
   // parse requests of content-type - application/x-www-form-urlencoded
   app.use(bodyParser.urlencoded({ extended: true }));
 
+  app.use('/upload', express.static('upload'));
+
   const Role = db.role;
 
   db.sequelize.sync({alter:true})
@@ -94,7 +96,6 @@ const start = async () => {
       console.log("Failed to sync db: " + err.message); 
     });
 
-  // // drop the table if it already exists
   // db.sequelize.sync({ force: true }).then(() => {
   //   console.log("Drop and re-sync db.");
   // });
@@ -109,8 +110,10 @@ const start = async () => {
     console.log(`AdminJS started on http://localhost:${PORT}${admin.options.rootPath}`);
   });
   require("./app/routes/product.routes")(app);
+  require("./app/routes/categories.routes")(app);
   require('./app/routes/auth.routes')(app);
   require('./app/routes/user.routes')(app);
+  require('./app/routes/merchant/auth.routes')(app);
   function initial() {
     Role.create({
       id: 1,

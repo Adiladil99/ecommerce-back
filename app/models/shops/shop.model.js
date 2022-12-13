@@ -8,16 +8,19 @@ module.exports = (sequelize, Sequelize) => {
     name: {
       type: Sequelize.STRING
     },
-    iin: {
+    iin_bin: {
       type: Sequelize.STRING
     },
-    phone: {
+    shop_phone: {
       type: Sequelize.STRING
     },
-    email: {
+    shop_email: {
       type: Sequelize.STRING
     },
-    image: {
+    shop_image: {
+      type: Sequelize.STRING
+    },
+    shop_document: {
       type: Sequelize.STRING
     }
   }, {

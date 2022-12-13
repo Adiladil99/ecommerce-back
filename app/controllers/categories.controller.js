@@ -1,6 +1,6 @@
 const db = require("../models");
 const fs = require("fs");
-const Product = db.pr_product;
+const Category = db.pr_category;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Product
@@ -14,18 +14,14 @@ exports.create = (req, res) => {
   }
 
   // Create a Product
-  const product = {
+  const сategory = {
     name: req.body.name,
-    articul: req.body.articul,
-    description: req.body.description,
-    main_image: "/upload/" + req.file.filename,
-    link_to_video: req.body.link_to_video,
-    prBrandId: req.body.brand_id,
-    prCategoryId: req.body.category_id,
+    image: "/upload/" + req.file.filename,
+    parentId: req.body.parentId
   };
 
   // Save Product in the database
-  Product.create(product)
+  Category.create(сategory)
     .then(data => {
       res.send(data);
       // fs.writeFileSync(
@@ -43,29 +39,20 @@ exports.create = (req, res) => {
 
 // Retrieve all Products from the database.
 exports.findAll = (req, res) => {
-  const id = req.query.id;
-  var condition = id ? { id: id } : null;
+  const name = req.query.name;
+  var condition = name ? { name: { [Op.like]: `%${name}%` } } : null;
 
-  Product.findAll({ where: condition })
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving products."
-      });
-    });
-};
-// Retrieve all Products from the database.
-exports.findByCategories = (req, res) => {
-  const category_id = eval(req.query.category_id) ;
-  const brand_id = eval(req.query.brand_id);
-  var prCategoryId = category_id ? { prCategoryId: category_id } : null;
-  var prBrandId = brand_id ? { prBrandId: brand_id } : null;
-  console.log(category_id);
-
-  Product.findAll({ where: {[Op.and]: [prCategoryId, prBrandId]}  })
+  Category.findAll({ 
+    // where: { parentId: null }, 
+    include: [{
+      model: Category, 
+      as: 'sub_categories',
+      where: { parentId: db.Sequelize.col('pr_category.id') },
+      attributes: ['id', 'name', 'image']
+    }
+    ],
+    attributes: ['id', 'name', 'image']
+  })
     .then(data => {
       res.send(data);
     })
@@ -80,20 +67,30 @@ exports.findByCategories = (req, res) => {
 // Find a single Product with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
+  var infoCategory = null
 
-  Product.findByPk(id)
+  Category.findByPk(id).then(data => infoCategory = data)
+
+  Category.findAll({ 
+    where: { parentId: id }, 
+  })
     .then(data => {
       if (data) {
-        res.send(data);
+        res.send([
+          {
+            infoCategory,
+            sub_categories: data
+          }
+        ]);
       } else {
         res.status(404).send({
-          message: `Cannot find Product with id=${id}.`
+          message: `Cannot find Category with id=${id}.`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving Product with id=" + id
+        message: "Error retrieving Category with id=" + id
       });
     });
 };
