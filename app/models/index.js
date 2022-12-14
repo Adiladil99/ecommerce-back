@@ -3,7 +3,14 @@ const dbConfig = require("../config/db.config.js");
 const Sequelize = require("sequelize");
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
+  // port: dbConfig.PORT,
   dialect: dbConfig.dialect,
+  // dialectOptions: {
+  //   connectTimeout:100000
+  // },
+  // dialectOptions: {
+  //   allowPublicKeyRetrieval: true,
+  // },
   operatorsAliases: '0',
   pool: {
     max: dbConfig.pool.max,
@@ -12,6 +19,7 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     idle: dbConfig.pool.idle
   }
 });
+// const sequelize = new Sequelize('mysql://172.17.0.2:3306/ecommerce?allowPublicKeyRetrieval=true')
 
 const db = {};
 

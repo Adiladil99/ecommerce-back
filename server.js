@@ -114,6 +114,7 @@ const start = async () => {
   require('./app/routes/auth.routes')(app);
   require('./app/routes/user.routes')(app);
   require('./app/routes/merchant/auth.routes')(app);
+  require('./app/routes/merchant/addresses.routes')(app);
   function initial() {
     Role.create({
       id: 1,
