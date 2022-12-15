@@ -9,7 +9,7 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.BOOLEAN
     },
     postponeTime: {
-      type: Sequelize.DATE
+      type: Sequelize.TIME
     },
     typeOrderDay: {
       type: Sequelize.BOOLEAN

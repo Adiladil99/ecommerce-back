@@ -1,35 +1,36 @@
 const db = require("../../models");
 const fs = require("fs");
-const Addresses = db.sh_addresses;
-const User = db.sh_users;
+const Addresses = db.cl_addresses;
+const User = db.cl_client;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Product
-exports.create = (req, res) => {
-  var addresses = {}  
+exports.create = (req, res) => {  
   User.findByPk(req.userId)
     .then(data => {
-      addresses = {
+      console.log(req.userId);
+      var addresses = {
         cityId: parseInt(req.body.cityId),
-        is_warehouse: eval(req.body.is_warehouse),
-        status: eval(req.body.status),
         address: req.body.address,
-        shShopId: data.dataValues.shShopId
+        clClientId: req.userId
       };
       Addresses.create(addresses)
-      .then(data => {
-        res.send(data);
-      }) 
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while creating the Product."
-        }); 
-      });
+        .then(data => {
+          res.send(data);
+        }) 
+        .catch(err => {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while creating the Product."
+          }); 
+        });
     })
-  
-
-  
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message
+      }); 
+    })  
 };
 
 // Retrieve all Products from the database.
@@ -37,7 +38,7 @@ exports.findAll = (req, res) => {
   User.findByPk(req.userId)
     .then(data => {
       Addresses.findAll({ 
-        where: { shShopId: data.dataValues.shShopId }, 
+        where: { clClientId: req.userId }, 
       })
         .then(data => {
           res.send(data);

@@ -1,43 +1,44 @@
 const db = require("../../models");
 const fs = require("fs");
-const Addresses = db.sh_addresses;
-const User = db.sh_users;
+const Favorites = db.cl_favorites;
+const User = db.cl_client;
+const Product = db.pr_product;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Product
 exports.create = (req, res) => {
-  var addresses = {}  
+  var favorites = {}  
   User.findByPk(req.userId)
     .then(data => {
-      addresses = {
-        cityId: parseInt(req.body.cityId),
-        is_warehouse: eval(req.body.is_warehouse),
-        status: eval(req.body.status),
-        address: req.body.address,
-        shShopId: data.dataValues.shShopId
-      };
-      Addresses.create(addresses)
-      .then(data => {
-        res.send(data);
-      }) 
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while creating the Product."
-        }); 
-      });
-    })
-  
-
-  
+          favorites = {
+            product_id: parseInt(req.body.product_id),
+            client_id: req.userId,
+          };
+          Favorites.create(favorites)
+          .then(item => {
+            res.send(item);
+          }) 
+          .catch(err => {
+            res.status(500).send({
+              message:
+                "Такой продукт не найден!"
+            }); 
+          });
+      })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the Product."
+      }); 
+    });  
 };
 
 // Retrieve all Products from the database.
 exports.findAll = (req, res) => {
   User.findByPk(req.userId)
     .then(data => {
-      Addresses.findAll({ 
-        where: { shShopId: data.dataValues.shShopId }, 
+      Favorites.findAll({ 
+        where: { client_id: req.userId }, 
       })
         .then(data => {
           res.send(data);
@@ -58,9 +59,9 @@ exports.findOne = (req, res) => {
   const id = req.params.id;
   var infoAddresses = null
 
-  Addresses.findByPk(id).then(data => infoAddresses = data)
+  Favorites.findByPk(id).then(data => infoAddresses = data)
 
-  Addresses.findAll({ 
+  Favorites.findAll({ 
     where: { parentId: id }, 
   })
     .then(data => {
@@ -73,13 +74,13 @@ exports.findOne = (req, res) => {
         ]);
       } else {
         res.status(404).send({
-          message: `Cannot find Addresses with id=${id}.`
+          message: `Cannot find Favorites with id=${id}.`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving Addresses with id=" + id
+        message: "Error retrieving Favorites with id=" + id
       });
     });
 };

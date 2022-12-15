@@ -109,12 +109,13 @@ const start = async () => {
   app.listen(PORT, () => {
     console.log(`AdminJS started on http://localhost:${PORT}${admin.options.rootPath}`);
   });
-  require("./app/routes/product.routes")(app);
-  require("./app/routes/categories.routes")(app);
-  require('./app/routes/auth.routes')(app);
-  require('./app/routes/user.routes')(app);
-  require('./app/routes/merchant/auth.routes')(app);
-  require('./app/routes/merchant/addresses.routes')(app);
+  // require("./app/routes/product.routes")(app);
+  // require("./app/routes/categories.routes")(app);
+  // require('./app/routes/auth.routes')(app);
+  // require('./app/routes/user.routes')(app);
+  // require('./app/routes/merchant/auth.routes')(app);
+  // require('./app/routes/merchant/addresses.routes')(app);
+  require("./app/routes")(app);
   function initial() {
     Role.create({
       id: 1,

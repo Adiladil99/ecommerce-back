@@ -1,20 +1,16 @@
-const { verifySignUp } = require("../../middleware");
 const upload = require("../../middleware/upload");
-const { authJwt } = require("../../middleware");
 
 module.exports = function(app) {
   
-  const authShop = require("../../controllers/merchant/auth.controller.js");
+  const authShop = require("../../controllers/client/auth.controller.js");
 
   var router = require("express").Router();
 
   // Create a new Product
-  router.post("/login", upload.single("shop_image"), authShop.signin);
-  router.post("/register", upload.single("shop_image"), authShop.signup);
-  router.post("/add-employee", upload.single("image"), [authJwt.verifyToken, authJwt.isAdmin], authShop.add_employee);
-  router.get("/get-employee", [authJwt.verifyToken, authJwt.isAdmin], authShop.get_employee);
+  router.post("/login", upload.single(""), authShop.signin);
+  router.post("/register", upload.single("image"), authShop.signup);
 
-  app.use('/api/merchant/auth', router);
+  app.use('/api/client/auth', router);
 
   // app.use(function(req, res, next) {
   //   res.header(

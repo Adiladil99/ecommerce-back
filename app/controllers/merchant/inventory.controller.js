@@ -1,42 +1,74 @@
 const db = require("../../models");
 const fs = require("fs");
+const Inventory = db.sh_inventory;
 const Addresses = db.sh_addresses;
 const User = db.sh_users;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Product
 exports.create = (req, res) => {
-  var addresses = {}  
+  var inventory = {}
+  
   User.findByPk(req.userId)
     .then(data => {
-      addresses = {
-        cityId: parseInt(req.body.cityId),
-        is_warehouse: eval(req.body.is_warehouse),
-        status: eval(req.body.status),
-        address: req.body.address,
-        shShopId: data.dataValues.shShopId
-      };
-      Addresses.create(addresses)
-      .then(data => {
-        res.send(data);
-      }) 
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while creating the Product."
-        }); 
-      });
-    })
-  
-
-  
+      Addresses.findOne({ 
+        where: { 
+          [Op.and]: [ 
+            { shShopId: data.dataValues.shShopId },
+            { id: req.body.address_id },
+          ]}, 
+      }).then(item => {
+        Inventory.findAll({ 
+          where: { 
+            [Op.and]: [ 
+              { shAddressId: req.body.address_id },
+              { prProductId: req.body.product_id },
+            ]}, 
+        }).then(data=> {
+          console.log(data);
+          if(!data.length) {
+            inventory = {			
+              prProductId: req.body.product_id,
+              shAddressId: req.body.address_id,
+              shProductStatusId: 1,
+              price: req.body.price,
+              quantity: req.body.quantity,
+            };
+            Inventory.create(inventory)
+              .then(data => {
+                res.send(data);
+              }) 
+            .catch(err => {
+              res.status(500).send({
+                message:
+                  err.message || "Some error occurred while creating the Product."
+              }); 
+            });
+          } else {
+            res.status(500).send({
+              message:
+                "Такой товар уже добавлен!"
+            }); 
+          }
+        })
+        // .catch(err=> {
+          
+        // })
+      })      
+    })  
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the Product."
+      }); 
+    });
 };
 
 // Retrieve all Products from the database.
 exports.findAll = (req, res) => {
   User.findByPk(req.userId)
     .then(data => {
-      Addresses.findAll({ 
+      Inventory.findAll({ 
         where: { shShopId: data.dataValues.shShopId }, 
       })
         .then(data => {
@@ -58,9 +90,9 @@ exports.findOne = (req, res) => {
   const id = req.params.id;
   var infoAddresses = null
 
-  Addresses.findByPk(id).then(data => infoAddresses = data)
+  Inventory.findByPk(id).then(data => infoAddresses = data)
 
-  Addresses.findAll({ 
+  Inventory.findAll({ 
     where: { parentId: id }, 
   })
     .then(data => {
@@ -73,13 +105,13 @@ exports.findOne = (req, res) => {
         ]);
       } else {
         res.status(404).send({
-          message: `Cannot find Addresses with id=${id}.`
+          message: `Cannot find Inventory with id=${id}.`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving Addresses with id=" + id
+        message: "Error retrieving Inventory with id=" + id
       });
     });
 };

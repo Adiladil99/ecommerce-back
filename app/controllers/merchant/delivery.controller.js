@@ -1,22 +1,33 @@
 const db = require("../../models");
 const fs = require("fs");
-const Addresses = db.sh_addresses;
+const Delivery = db.sh_delivery;
 const User = db.sh_users;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Product
 exports.create = (req, res) => {
-  var addresses = {}  
+  // Validate request
+  // if (!req.body.name) {
+  //   res.status(400).send({
+  //     message: req.body
+  //   });
+  //   return;
+  // }
+  var delivery = {}
+  
   User.findByPk(req.userId)
     .then(data => {
-      addresses = {
+      delivery = {
         cityId: parseInt(req.body.cityId),
-        is_warehouse: eval(req.body.is_warehouse),
-        status: eval(req.body.status),
-        address: req.body.address,
+        typeOrderDay: eval(req.body.typeOrderDay),
+        typeNextDay: eval(req.body.typeNextDay),
+        delivery: eval(req.body.delivery),
+        postponeTime: req.body.postponeTime,
+        orderPrice: req.body.orderPrice,
+        cost: req.body.cost,
         shShopId: data.dataValues.shShopId
       };
-      Addresses.create(addresses)
+      Delivery.create(delivery)
       .then(data => {
         res.send(data);
       }) 
@@ -36,7 +47,7 @@ exports.create = (req, res) => {
 exports.findAll = (req, res) => {
   User.findByPk(req.userId)
     .then(data => {
-      Addresses.findAll({ 
+      Delivery.findAll({ 
         where: { shShopId: data.dataValues.shShopId }, 
       })
         .then(data => {
@@ -58,9 +69,9 @@ exports.findOne = (req, res) => {
   const id = req.params.id;
   var infoAddresses = null
 
-  Addresses.findByPk(id).then(data => infoAddresses = data)
+  Delivery.findByPk(id).then(data => infoAddresses = data)
 
-  Addresses.findAll({ 
+  Delivery.findAll({ 
     where: { parentId: id }, 
   })
     .then(data => {
@@ -73,13 +84,13 @@ exports.findOne = (req, res) => {
         ]);
       } else {
         res.status(404).send({
-          message: `Cannot find Addresses with id=${id}.`
+          message: `Cannot find Delivery with id=${id}.`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving Addresses with id=" + id
+        message: "Error retrieving Delivery with id=" + id
       });
     });
 };

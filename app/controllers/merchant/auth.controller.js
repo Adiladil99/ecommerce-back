@@ -85,3 +85,49 @@ exports.signin = (req, res) => {
       res.status(500).send({ message: err.message });
     });
 };
+
+exports.add_employee = (req, res) => {
+  console.log(req.shopId);
+  Shop_User.create({	
+    name: req.body.name,
+    surname: req.body.surname,
+    patronomyc: req.body.patronomyc,
+    iin: req.body.iin,
+    phone: req.body.phone,
+    image: "/upload/" + req.file.image,
+    email: req.body.email,
+    password: bcrypt.hashSync(req.body.password, 8),
+    shShopId: req.shopId,
+    shUsersRoleId: req.body.role_id,
+  })
+    .then(elem => {
+      res.status(201).send('Новый сотрудник успешно добавлена!');
+    })
+    .catch(err => { 
+      res.status(500).send({ message: err.message });
+    });
+};
+
+exports.get_employee = (req, res) => {
+  Shop_User.findAll({ 
+    where: { 
+      [Op.and]: [ 
+        {shShopId: req.shopId },
+        {
+          id: {
+            [Op.ne]: req.userId  
+          }
+        },
+      ]}, 
+  })
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Нет данных."
+      });
+    });
+};
+
